@@ -34,10 +34,8 @@ export default function Home() {
     ExpensesMoney: undefined,
   })
 
-  const handleSaveExpenses = () => {
-    console.log(dataSave);
-
-    axios.put('http://localhost:8080/CreateExpenses', dataSave)
+  const handleSaveExpenses = async () => {
+    await axios.put('http://localhost:8080/CreateExpenses', dataSave)
       .then(res => {
         setShowAlert(true);
         setTimeout(() => {
@@ -88,7 +86,7 @@ export default function Home() {
   const [isModalDetailOpen, setIsModalDetailOpen] = useState(false);
   const modalDetailRef = useRef(null);
   const handleModalDetail = (e) => {
-    if ((e.target.id != NaN && e.target.id != null && e.target.id != '') || isModalDetailOpen) {
+    if ((e.target.id != null && e.target.id != '') || isModalDetailOpen) {
       setIsModalDetailOpen(!isModalDetailOpen);
       if (modalDetailRef.current) {
         if (isModalDetailOpen) {
@@ -152,11 +150,14 @@ export default function Home() {
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <div className="z-10 max-w-5xl w-full items-center justify-between text-sm lg:flex">
           <div className="flex items-center h-full">
-            <img className='w-11 h-11 mr-2' src="https://daisyui.com/images/emoji/yawning-face@80.webp" /> <h1 className='text-2xl font-bold'>Expenses App</h1>
+            <img className='w-11 h-11 mr-2' src="https://daisyui.com/images/emoji/yawning-face@80.webp" />
+            <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
+              Expense
+            </h1>
           </div>
 
           <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-            <button className="btn w-64 rounded-full"
+            <button className="btn transition-colors duration-500 transform w-64 rounded-full"
               onClick={handleModal}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>

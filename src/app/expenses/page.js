@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useSearchParams , useRouter } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import DataTable from '@/components/DataTable';
 
 function ExpensesDetail() {
@@ -9,8 +9,8 @@ function ExpensesDetail() {
     const searchParams = useSearchParams()
     const id = searchParams.get('id')
     const [dataListDetail, setDataListDetail] = useState()
-    const GetDatalist = () => {
-        axios.post('http://localhost:8080/GetListMoneyCardDetail', {id: parseInt(id)})
+    const GetDatalist = async () => {
+        await axios.post('http://localhost:8080/GetListMoneyCardDetail', { id: parseInt(id) })
             .then(res => {
                 const dataList = res.data;
                 setDataListDetail(dataList);
@@ -29,11 +29,14 @@ function ExpensesDetail() {
         <main className="flex min-h-screen flex-col items-center justify-between p-24">
             <div className="z-10 max-w-5xl w-full items-center justify-between text-sm lg:flex">
                 <div className="flex items-center h-full">
-                    <img className='w-11 h-11 mr-2' src="https://daisyui.com/images/emoji/yawning-face@80.webp" /> <h1 className='text-2xl font-bold'>View Statement {id}</h1>
+                    <img className='w-11 h-11 mr-2' src="https://daisyui.com/images/emoji/yawning-face@80.webp" />
+                    <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
+                        View Statement {id}
+                    </h1>
                 </div>
 
                 <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-                    <button className="btn w-64 rounded-full" onClick={() => {router.push('/')}}>
+                    <button className="btn w-64 rounded-full" onClick={() => { router.push('/') }}>
                         <svg xmlns="http://www.w3.org/2000/svg" className='w-6 h-6' viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 5l-7 7 7 7" /></svg>
                         Back
                     </button>
@@ -41,7 +44,7 @@ function ExpensesDetail() {
             </div>
 
             <div className="relative flex place-items-center">
-                <DataTable dataList = {dataListDetail} />
+                <DataTable dataList={dataListDetail} />
             </div>
 
             <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-3 lg:text-left space-x-2">
