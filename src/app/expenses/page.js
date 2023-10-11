@@ -36,7 +36,7 @@ function ExpensesDetail() {
                 </div>
 
                 <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-                    <button className="btn w-64 rounded-full" onClick={() => { router.push('/') }}>
+                    <button className="btn transition-colors duration-500 transform w-64 rounded-full" onClick={() => { router.push('/') }}>
                         <svg xmlns="http://www.w3.org/2000/svg" className='w-6 h-6' viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 5l-7 7 7 7" /></svg>
                         Back
                     </button>
