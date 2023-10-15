@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation'
 import { Swiper, SwiperSlide } from 'swiper/react';
-
+import GetApiEndPoint from '../helper/ApiEndPoint'
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/effect-cards';
@@ -35,7 +35,8 @@ export default function Home() {
   })
 
   const handleSaveExpenses = async () => {
-    await axios.put('http://localhost:8080/CreateExpenses', dataSave)
+    const endpoint = GetApiEndPoint();
+    await axios.put(endpoint + '/Expenses/CreateExpenses', dataSave)
       .then(res => {
         setShowAlert(true);
         setTimeout(() => {
@@ -68,7 +69,8 @@ export default function Home() {
   })
 
   const callGetDataCardList = async () => {
-    await axios.get('http://localhost:8080/GetListMoneyCard')
+    const endpoint = GetApiEndPoint();
+    await axios.get(endpoint + '/Expenses/GetListMoneyCard')
       .then(res => {
         const cardList = res.data;
 
