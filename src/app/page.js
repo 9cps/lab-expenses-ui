@@ -73,7 +73,7 @@ export default function Home() {
     await axios.get(endpoint + '/Expenses/GetListMoneyCard')
       .then(res => {
         const cardList = res.data;
-
+        setActiveIndex(cardList.data.Data[0].ID); //defult first card
         setSelectCard(cardList.data.Data[0].ID); //defult first card
         setUseThisMonth(cardList.data.Data[0].TotalSpending);
         setBalance(cardList.data.TotalBalance);
@@ -110,9 +110,8 @@ export default function Home() {
   }
 
   const handleSaveExpensesDetail = async () => {
-    console.log(dataSaveDetail)
-
-    await axios.put('http://localhost:8080/CreateExpensesDetail', dataSaveDetail)
+    const endpoint = GetApiEndPoint();
+    await axios.put(endpoint + '/Expenses/CreateExpensesDetail', dataSaveDetail)
       .then(res => {
         setShowAlertDetail(true);
         setTimeout(() => {

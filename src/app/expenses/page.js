@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSearchParams, useRouter } from 'next/navigation'
 import DataTable from '@/components/DataTable';
+import GetApiEndPoint from '../../helper/ApiEndPoint'
 
 function ExpensesDetail() {
     const router = useRouter();
@@ -10,7 +11,8 @@ function ExpensesDetail() {
     const id = searchParams.get('id')
     const [dataListDetail, setDataListDetail] = useState()
     const GetDatalist = async () => {
-        await axios.post('http://localhost:8080/GetListMoneyCardDetail', { id: parseInt(id) })
+        const endpoint = GetApiEndPoint();
+        await axios.post(endpoint + '/Expenses/GetListMoneyCardDetail', { id: parseInt(id) })
             .then(res => {
                 const dataList = res.data;
                 setDataListDetail(dataList);

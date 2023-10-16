@@ -2,7 +2,7 @@
 import React from 'react'
 import axios from 'axios';
 import { Swiper, SwiperSlide } from 'swiper/react';
-
+import GetApiEndPoint from '../helper/ApiEndPoint'
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/effect-cards';
@@ -22,7 +22,8 @@ function CardList(onSlideChange) {
         ExpensesAmount: undefined,
     })
     const callGetDataCardList = () => {
-        axios.get('http://localhost:8080/GetListMoneyCard')
+        const endpoint = GetApiEndPoint();
+        axios.get(endpoint + '/Expenses/GetListMoneyCard')
             .then(res => {
                 const cardList = res.data;
                 setSelectCard(cardList.data[0].ID); //defult first card
@@ -58,9 +59,8 @@ function CardList(onSlideChange) {
     }
 
     const handleSaveExpensesDetail = () => {
-        console.log(dataSaveDetail)
-
-        axios.put('http://localhost:8080/CreateExpensesDetail', dataSaveDetail)
+        const endpoint = GetApiEndPoint();
+        axios.put(endpoint + '/Expenses/CreateExpensesDetail', dataSaveDetail)
             .then(res => {
                 setShowAlertDetail(true);
                 setTimeout(() => {
