@@ -151,7 +151,7 @@ export default function Home() {
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <div className="z-10 max-w-5xl w-full items-center justify-between text-sm lg:flex">
           <div className="flex items-center h-full">
-            <img className='w-11 h-11 mr-2' src="https://daisyui.com/images/emoji/yawning-face@80.webp" />
+            <img className='w-11 h-11 mr-2' src="https://img.daisyui.com/images/emoji/yawning-face@80.webp" />
             <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
               Expense
             </h1>
