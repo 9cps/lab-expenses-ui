@@ -5,7 +5,7 @@ import NavBars, { NavigationEvents } from '../components/NavBars'
 import Providers from '@/components/Providers'
 const inter = Inter({ subsets: ['latin'] })
 export const metadata = {
-  title: 'Expense WebApplication',
+  title: 'Payground',
   description: 'Survey your statement'
 }
 

@@ -63,7 +63,7 @@ export default function Home() {
   const [useThisMonth, setUseThisMonth] = useState(0)
   const [dataSaveDetail, setDataSaveDetail] = useState({
     ExpensesId: undefined,
-    ExpensesType: undefined,
+    ExpensesType: "FIXCOST",
     ExpensesDesc: undefined,
     ExpensesAmount: undefined,
   })
@@ -88,24 +88,23 @@ export default function Home() {
   const [isModalDetailOpen, setIsModalDetailOpen] = useState(false);
   const modalDetailRef = useRef(null);
   const handleModalDetail = (e) => {
-    if ((e.target.id != null && e.target.id != '') || isModalDetailOpen) {
-      setIsModalDetailOpen(!isModalDetailOpen);
-      if (modalDetailRef.current) {
-        if (isModalDetailOpen) {
-          setSelectCard();
-          setDataSaveDetail({
-            ExpensesId: '',
-            ExpensesType: '',
-            ExpensesDesc: '',
-            ExpensesAmount: 0,
-          });
-          modalDetailRef.current.close(); // Close the modal
-        } else {
-          setSelectCard(e.target.id);
-          setDataSaveDetail({ ...dataSaveDetail, ExpensesId: parseInt(e.target.id) });
-          modalDetailRef.current.showModal(); // Show the modal
-        }
-      }
+    const cardId = e?.currentTarget?.id || activeIndex;
+    if (!modalDetailRef.current) return;
+    if (isModalDetailOpen) {
+      setIsModalDetailOpen(false);
+      setSelectCard();
+      setDataSaveDetail({
+        ExpensesId: '',
+        ExpensesType: '',
+        ExpensesDesc: '',
+        ExpensesAmount: 0,
+      });
+      modalDetailRef.current.close();
+    } else {
+      setIsModalDetailOpen(true);
+      setSelectCard(cardId);
+      setDataSaveDetail({ ...dataSaveDetail, ExpensesId: parseInt(cardId) });
+      modalDetailRef.current.showModal();
     }
   }
 
@@ -124,9 +123,9 @@ export default function Home() {
             ExpensesDesc: undefined,
             ExpensesAmount: undefined,
           });
-        }, 5000);
-
-        callGetDataCardList();
+          console.log("Set defualt detail...");
+          location.reload();
+        }, 3000);
       })
       .catch(error => {
         console.error('Error fetching data:', error);
@@ -152,8 +151,8 @@ export default function Home() {
         <div className="z-10 max-w-5xl w-full items-center justify-between text-sm lg:flex">
           <div className="flex items-center h-full">
             <img className='w-11 h-11 mr-2' src="https://img.daisyui.com/images/emoji/yawning-face@80.webp" />
-            <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
-              Expense
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
+              Payground
             </h1>
           </div>
 
@@ -161,7 +160,14 @@ export default function Home() {
             <button className="btn transition-colors duration-500 transform w-64 rounded-full"
               onClick={handleModal}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
               Add new
             </button>
           </div>
@@ -177,7 +183,7 @@ export default function Home() {
           >
             {dataListCard ? (
               dataListCard.data.Data.map((item, index) => (
-                <SwiperSlide onClick={handleModalDetail} id={item.ID} key={item.ID}>
+                <SwiperSlide id={item.ID} key={item.ID}>
                   <div className="w-full flex justify-between">
                     <div>
                       <p>{item.ExpensesMonth}</p>
@@ -201,6 +207,18 @@ export default function Home() {
             )}
           </Swiper>
 
+          <div className="absolute -bottom-[72px] left-0 right-0 flex justify-center">
+            <button
+              className="btn transition-colors duration-500 transform w-64 rounded-full"
+              onClick={handleModalDetail}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+              </svg>
+              Add Expense
+            </button>
+          </div>
+
           <dialog ref={modalDetailRef} className="modal modal-bottom sm:modal-middle">
             <div className="modal-box">
               {showAlertDetail && (
@@ -212,8 +230,8 @@ export default function Home() {
                     viewBox="0 0 24 24"
                   >
                     <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
                       strokeWidth="2"
                       d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
@@ -223,23 +241,36 @@ export default function Home() {
               )}
               <h3 className="font-bold text-lg">Detail Expenses {selectCard}</h3>
               <div className="w-full flex justify-between py-4 space-x-4">
-                <select className="select select-bordered w-full max-w-xs"
+              <select
+                  className="select select-bordered w-full max-w-xs"
                   onChange={(e) =>
                     setDataSaveDetail({ ...dataSaveDetail, ExpensesType: e.target.value })
                   }
-                  value={dataSaveDetail.ExpensesType}
+                  value={dataSaveDetail.ExpensesType} // ใช้ value เพื่อควบคุมค่า
                 >
-                  <option disabled selected>Please select type</option>
                   <option value='FIXCOST'>Fix cost</option>
                   <option value='CREDIT'>Credit</option>
                   <option value='OTHER'>Other</option>
                 </select>
-                <input type="text" placeholder="Description" className="input input-bordered w-full max-w-xs"
-                  value={dataSaveDetail.ExpensesDesc}
+                <input type="text" placeholder="Description"
+                  className="input input-bordered w-full max-w-xs"
+                  value={dataSaveDetail.ExpensesDesc || ''}
                   onChange={(e) =>
                     setDataSaveDetail({ ...dataSaveDetail, ExpensesDesc: e.target.value })
                   }
                 />
+              </div>
+              <div className="w-full flex flex-wrap gap-2 pb-3">
+                {['ค่าน้ำ', 'ค่าไฟ', 'ค่าเน็ต', 'ค่าโทรศัพท์', 'ค่าเช่าบ้าน', 'ค่าผ่อนรถ', 'ค่าอาหาร', 'ค่าเดินทาง', 'ค่าบัตรเครดิต', 'ค่าประกัน'].map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    className="btn btn-xs btn-outline rounded-full"
+                    onClick={() => setDataSaveDetail({ ...dataSaveDetail, ExpensesDesc: item })}
+                  >
+                    {item}
+                  </button>
+                ))}
               </div>
               <div className="w-full">
                 <input type="number"
