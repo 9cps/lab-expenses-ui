@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Payground — Lab Expenses UI
+
+A [Next.js](https://nextjs.org/) (App Router) expense tracker. Browse monthly
+statement cards, drill into a statement's line items, and add / edit / delete
+expenses. Built with TypeScript, Tailwind CSS + daisyUI, Swiper and next-auth.
+
+## Tech Stack
+
+- **Next.js** (App Router) + **React** + **TypeScript** (`strict`)
+- **Tailwind CSS** + **daisyUI** for styling
+- **axios** for the API layer, **moment** for date formatting
+- **Swiper** for the card carousel
+- **next-auth** for authentication (Google provider)
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Available scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+| Script              | Description                          |
+| ------------------- | ------------------------------------ |
+| `npm run dev`       | Start the dev server                 |
+| `npm run build`     | Production build                     |
+| `npm run start`     | Serve the production build           |
+| `npm run lint`      | Run ESLint (`next lint`)             |
+| `npm run typecheck` | Type-check with `tsc --noEmit`       |
 
-## Learn More
+## Environment
 
-To learn more about Next.js, take a look at the following resources:
+Create a `.env.local` (kept out of git) with:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Selects which endpoint below is active: DEV | UAT | PRD
+NEXT_PUBLIC_STATE=DEV
+NEXT_PUBLIC_ENDPOINT_DEV=http://localhost:8080/api/v1
+NEXT_PUBLIC_ENDPOINT_UAT=http://localhost:8080/api/v2
+NEXT_PUBLIC_ENDPOINT_PRD=http://localhost:8080/api/v3
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+# next-auth Google provider
+NEXT_SECRET_GOOGLE_CLIENT_ID=...
+NEXT_SECRET_GOOGLE_CLIENT_SECRET=...
+```
 
-## Deploy on Vercel
+> **Security:** keep real secrets in `.env.local` (git-ignored), not in `.env`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+The app follows a **feature-based** layout. Routes stay thin and delegate to a
+self-contained `expenses` feature; cross-cutting UI and infrastructure live in
+shared folders.
+
+```
+src/
+├── app/                      # Routes — thin pages that compose feature pieces
+│   ├── layout.tsx
+│   ├── page.tsx              # Home: statement cards + create card / add expense
+│   ├── expenses/page.tsx     # Statement detail: table + add / edit / delete
+│   └── api/route.ts          # Mock auth-session endpoint
+│
+├── lib/                      # App-wide infrastructure
+│   ├── config.ts             # Resolve API base URL from NEXT_PUBLIC_STATE
+│   └── apiClient.ts          # Shared axios instance (baseURL + headers)
+│
+├── features/expenses/        # The expenses domain
+│   ├── types.ts              # Domain & API types
+│   ├── constants.ts          # Type options, badge map, description presets
+│   ├── api.ts                # Data-access layer (expensesApi.*)
+│   ├── hooks/                # useExpenseCards, useExpenseDetails
+│   ├── components/           # Table, card swiper, modals, form fields
+│   └── index.ts              # Public barrel export
+│
+├── components/
+│   ├── ui/                   # Reusable primitives: Modal, StatCard, SuccessAlert, icons
+│   ├── layout/PageHeader.tsx
+│   └── Providers / NavBars / SignInButton
+│
+└── hooks/                    # Shared hooks: useDialog, useTransientMessage
+```
+
+### Layering
+
+```
+page (UI) → feature hooks (state/logic) → feature api → lib/apiClient → lib/config
+```
+
+Components never build endpoint strings or call axios directly — all requests
+go through `features/expenses/api.ts`, which uses the shared `apiClient`.
+
+## Path Aliases
+
+`@/*` maps to `src/*` (configured in `tsconfig.json`), e.g.:
+
+```ts
+import { useExpenseCards } from '@/features/expenses/hooks/useExpenseCards';
+```
+
+## Docker
+
+```bash
+docker compose up --build
+```
+
+See `Dockerfile` / `docker-compose.yml` for details.
